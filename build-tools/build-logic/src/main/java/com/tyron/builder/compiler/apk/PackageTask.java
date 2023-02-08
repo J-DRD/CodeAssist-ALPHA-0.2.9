@@ -12,7 +12,7 @@ import com.tyron.builder.exception.CompilationFailedException;
 import com.tyron.builder.log.ILogger;
 import com.tyron.builder.project.Project;
 import com.tyron.builder.project.api.AndroidModule;
-
+import com.tyron.builder.model.ModuleSettings;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import android.util.Log;
+import com.tyron.builder.compiler.incremental.java.IncrementalCompileJavaTask;
+import com.tyron.builder.compiler.incremental.resource.IncrementalAssembleJarTask;
+import com.tyron.builder.compiler.incremental.resource.IncrementalAssembleAarTask;
 
 public class CleanTask extends Task<AndroidModule> {
 
@@ -66,24 +69,30 @@ public class CleanTask extends Task<AndroidModule> {
         }
 
         getModule().getCache(IncrementalJavaTask.CACHE_KEY, new Cache<>())
-                .clear();
+			.clear();
         getModule().getCache(IncrementalD8Task.CACHE_KEY, new Cache<>())
-                .clear();
+			.clear();
         getModule().getCache(MergeSymbolsTask.CACHE_KEY, new Cache<>())
-                .clear();
+			.clear();
+		getModule().getCache(IncrementalCompileJavaTask.CACHE_KEY, new Cache<>())
+			.clear();
+        getModule().getCache(IncrementalAssembleJarTask.CACHE_KEY, new Cache<>())
+			.clear();
+        getModule().getCache(IncrementalAssembleAarTask.CACHE_KEY, new Cache<>())
+			.clear();
     }
     private void cleanClasses() {
 
         File output = new File(getModule().getBuildDirectory(), "bin/classes/");
         List<File> classFiles = FileManager.findFilesWithExtension(
-                output,
-                ".class");
+			output,
+			".class");
         for (File file : classFiles) {
             String path = file.getAbsolutePath()
-                    .replace(output.getAbsolutePath(), "")
-                    .replace("/", ".")
-                    .substring(1)
-                    .replace(".class", "");
+				.replace(output.getAbsolutePath(), "")
+				.replace("/", ".")
+				.substring(1)
+				.replace(".class", "");
 
             if (!classExists(path)) {
                 if (file.delete()) {
@@ -96,15 +105,15 @@ public class CleanTask extends Task<AndroidModule> {
     private void cleanDexFiles() {
         File output = new File(getModule().getBuildDirectory(), "intermediate/classes");
         List<File> classFiles = FileManager.findFilesWithExtension(
-                output,
-                ".dex");
+			output,
+			".dex");
 
         for (File file : classFiles) {
             String path = file.getAbsolutePath()
-                    .replace(output.getAbsolutePath(), "")
-                    .replace("/", ".")
-                    .substring(1)
-                    .replace(".dex", "");
+				.replace(output.getAbsolutePath(), "")
+				.replace("/", ".")
+				.substring(1)
+				.replace(".dex", "");
             String packageName = path;
 
             if (file.getName().startsWith("-$$")) {
@@ -137,7 +146,7 @@ public class CleanTask extends Task<AndroidModule> {
             fqn = fqn.substring(0, fqn.indexOf('$'));
         }
         return getModule().getJavaFiles().get(fqn) != null ||
-               getModule().getKotlinFiles().get(fqn) != null ||
-               getModule().getResourceClasses().containsKey(fqn);
+			getModule().getKotlinFiles().get(fqn) != null ||
+			getModule().getResourceClasses().containsKey(fqn);
     }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public class ManifestMergeTask extends Task<AndroidModule> {
 
@@ -76,11 +77,10 @@ public class ManifestMergeTask extends Task<AndroidModule> {
                     manifests.add(manifest);
                 }
             }
-        }
+        }	
 
         mLibraryManifestFiles = manifests.toArray(new File[0]);
     }
-
 
     @Override
     public void run() throws IOException, CompilationFailedException {

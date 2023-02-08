@@ -1,7 +1,6 @@
 package com.tyron.builder.compiler.incremental.java;
 
 import androidx.annotation.VisibleForTesting;
-
 import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.JavacTool;
 import com.sun.tools.javac.file.JavacFileManager;
@@ -17,9 +16,7 @@ import com.tyron.builder.project.api.JavaModule;
 import com.tyron.builder.project.cache.CacheHolder;
 import com.tyron.common.util.Cache;
 import com.tyron.builder.model.ModuleSettings;
-
 import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -33,12 +30,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardLocation;
 import android.util.Log;
+import java.util.Set;
 
 public class IncrementalJavaTask extends Task<JavaModule> {
 
@@ -71,6 +68,7 @@ public class IncrementalJavaTask extends Task<JavaModule> {
         mClassCache = getModule().getCache(CACHE_KEY, new Cache<>());
 
         mJavaFiles = new ArrayList<>(getModule().getJavaFiles().values());
+
         if (getModule() instanceof AndroidModule) {
             mJavaFiles.addAll(((AndroidModule) getModule()).getResourceClasses().values());
         }
@@ -120,11 +118,8 @@ public class IncrementalJavaTask extends Task<JavaModule> {
         standardJavaFileManager.setSymbolFileEnabled(false);
 
         List<File> classpath = new ArrayList<>(getModule().getLibraries());
-        classpath.add(mOutputDir);
-
         File kotlinOutputDir = new File(getModule().getBuildDirectory(), "bin/kotlin/classes");
         classpath.add(kotlinOutputDir);
-	
         classpath.add(getModule().getBuildClassesDirectory());
 
         try {
@@ -226,9 +221,25 @@ public class IncrementalJavaTask extends Task<JavaModule> {
         return mFilesToCompile;
     }
 
-    private File findClassFile(String packageName) {
-        String path = packageName.replace(".", "/").concat(".class");
-        return new File(mOutputDir, path);
+	public static Set<File> getJavaFiles(File dir) {
+        Set<File> javaFiles = new HashSet<>();
+
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return Collections.emptySet();
+        }
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                javaFiles.addAll(getJavaFiles(file));
+            } else {
+                if (file.getName().endsWith(".java")) {
+                    javaFiles.add(file);
+                }
+            }
+        }
+
+        return javaFiles;
     }
 
     private void deleteAllFiles(File classFile, String ext) throws IOException {

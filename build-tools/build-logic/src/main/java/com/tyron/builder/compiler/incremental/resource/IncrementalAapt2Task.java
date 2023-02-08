@@ -10,7 +10,7 @@ import com.tyron.builder.model.DiagnosticWrapper;
 import com.tyron.builder.project.Project;
 import com.tyron.builder.project.api.AndroidModule;
 import com.tyron.builder.project.api.Module;
-
+import com.tyron.builder.model.ModuleSettings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -58,9 +58,7 @@ public class IncrementalAapt2Task extends Task<AndroidModule> {
 
         compileProject(filesToCompile);
         compileLibraries(librariesToCompile);
-
         link();
-
         updateJavaFiles();
     }
 

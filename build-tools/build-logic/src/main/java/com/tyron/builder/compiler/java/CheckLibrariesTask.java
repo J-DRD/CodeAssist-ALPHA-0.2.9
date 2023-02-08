@@ -61,7 +61,7 @@ public class CheckLibrariesTask extends Task<JavaModule> {
 
         Map<String, Library> fileLibsHashes = new HashMap<>();
         File[] fileLibraries = project.getLibraryDirectory().listFiles(c ->
-                c.getName().endsWith(".aar") || c.getName().endsWith(".jar"));
+			c.getName().endsWith(".aar") || c.getName().endsWith(".jar"));
         if (fileLibraries != null) {
             for (File fileLibrary : fileLibraries) {
                 try {
@@ -71,7 +71,7 @@ public class CheckLibrariesTask extends Task<JavaModule> {
                     fileLibsHashes.put(calculateMD5(fileLibrary), library);
                 } catch (IOException e) {
                     String message = "File " + fileLibrary +
-                            " is corrupt! Ignoring.";
+						" is corrupt! Ignoring.";
                     logger.warning(message);
                 }
             }
@@ -96,7 +96,7 @@ public class CheckLibrariesTask extends Task<JavaModule> {
 
         Map<String, Library> md5Map = new HashMap<>();
         libraries.forEach(it ->
-                md5Map.put(calculateMD5(it.getSourceFile()), it));
+			md5Map.put(calculateMD5(it.getSourceFile()), it));
         File buildLibs = new File(project.getBuildDirectory(), "libs");
         File[] buildLibraryDirs = buildLibs.listFiles(File::isDirectory);
         if (buildLibraryDirs != null) {
@@ -137,14 +137,14 @@ public class CheckLibrariesTask extends Task<JavaModule> {
                 file.renameTo(new File(libraryDir, "classes.jar"));
             } else if (library.getSourceFile().getName().endsWith(".aar")) {
                 Decompress.unzip(library.getSourceFile().getAbsolutePath(),
-                        libraryDir.getAbsolutePath());
+								 libraryDir.getAbsolutePath());
             }
         }
 
         String librariesString = new Gson().toJson(libraries.values());
         module.getSettings().edit()
-                .putString("libraries", librariesString)
-                .apply();
+			.putString("libraries", librariesString)
+			.apply();
     }
 
     public static String calculateMD5(File updateFile) {
